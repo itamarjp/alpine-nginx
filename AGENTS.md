@@ -40,6 +40,9 @@ tests/smoke.sh                smoke test of the image in the three modes
   avoids the compiled-in error log path at startup. Do not add paths outside `/tmp`.
 - **Hidden files return 404** in every mode, including inside subfolders and in redirect mode.
 - **`server_tokens off`.** No Nginx version in the `Server` header.
+- **`absolute_redirect off`.** The image always runs behind a proxy/ingress on port 8080.
+  An absolute `Location` (e.g. `/folder` → `http://host:8080/folder/`) breaks for clients.
+  Keep redirects relative; the smoke test checks `/pub` → `/pub/`.
 - Base image stays `alpine:edge`. CI rebuilds without cache weekly to pick up security fixes.
 
 ## CI and tests
@@ -79,8 +82,8 @@ deploy específico. Os exemplos usam `example.com`.
   O que não pode se perder vai no `nginx.conf` ou em `snippets/common.conf`.
 - Todo `server` inclui `snippets/common.conf`, com os cabeçalhos e o 404 para ocultos.
 - Invariantes: usuário `nginx` com **UID 101**, porta **8080**, tudo que é gravado em
-  runtime vai para `/tmp`, ocultos com 404 em todos os modos, `server_tokens off` e base
-  `alpine:edge`.
+  runtime vai para `/tmp`, ocultos com 404 em todos os modos, `server_tokens off`, `absolute_redirect off`
+  (redirects relativos, por causa do proxy na frente da porta 8080) e base `alpine:edge`.
 - O CI constrói, roda `tests/smoke.sh` nos três modos e só então publica, reaproveitando o
   cache do build testado. Ao mudar comportamento, acrescente uma verificação ao teste.
 - O `README.md` é bilíngue (inglês e português). Atualize os dois.

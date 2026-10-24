@@ -20,6 +20,8 @@ file folders with directory listing, or redirects. Content and, when needed, a c
 - Works with `readOnlyRootFilesystem: true` as long as `/tmp` is writable (an `emptyDir`).
 - Never serves hidden files or folders (`.git`, `.env`, `.htpasswd`...): they return 404.
 - Does not expose the Nginx version (`server_tokens off`).
+- Works behind a proxy or ingress: Nginx's own redirects (`/folder` → `/folder/`) use a
+  relative `Location`, so they never leak the internal port 8080 or `http` (`absolute_redirect off`).
 - `sendfile`, `gzip`, and `nosniff`, `X-Frame-Options` and `Referrer-Policy` headers.
 
 ### Modes
@@ -105,6 +107,8 @@ um `default.conf` próprio vêm de fora da imagem.
 - Funciona com `readOnlyRootFilesystem: true` desde que `/tmp` seja gravável (um `emptyDir`).
 - Nunca serve arquivos ou pastas ocultos (`.git`, `.env`, `.htpasswd`...): devolvem 404.
 - Não expõe a versão do Nginx (`server_tokens off`).
+- Funciona atrás de proxy ou ingress: os redirects do próprio Nginx (`/pasta` → `/pasta/`) usam
+  `Location` relativo e nunca vazam a porta interna 8080 nem `http` (`absolute_redirect off`).
 - `sendfile`, `gzip` e cabeçalhos `nosniff`, `X-Frame-Options` e `Referrer-Policy`.
 
 ### Modos
