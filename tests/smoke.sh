@@ -95,7 +95,9 @@ echo "$listing" | grep -q "arquivo.txt" || fail "autoindex: listagem não mostra
 echo "$listing" | grep -q "\.env" && fail "autoindex: listagem mostra o .env"
 [ "$(get http://127.0.0.1:8080/pub/arquivo.txt)" = "conteudo-de-teste" ] || fail "autoindex: download falhou"
 no_hidden autoindex
-ok "autoindex: listagem sem ocultos, download, ocultos com 404"
+loc=$(get -o /dev/null -D - "http://127.0.0.1:8080/pub" | tr -d '\r' | sed -n 's/^[Ll]ocation: //p')
+[ "$loc" = "/pub/" ] || fail "autoindex: /pub sem barra deveria redirecionar para '/pub/' (relativo), veio '$loc'"
+ok "autoindex: listagem sem ocultos, download, ocultos com 404, redirect de pasta relativo"
 
 # --- redirect ---
 start examples/redirect.conf
